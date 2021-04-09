@@ -3,8 +3,10 @@ import controller.ShowController;
 import dao.ShowDao;
 import dao.connection.ConnectionPool;
 import javafx.application.Application;
+import javafx.beans.Observable;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -17,6 +19,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import model.Show;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
 
@@ -36,6 +39,7 @@ public class Main extends Application{
 
 
     private TableView<Show> showTableView;
+    //forma -> kreiram jedan record u bazi..tabeli shows i da kreiram jedan record u table view
     private TextField showTitleTextField;
     private TextField numberOfSeasonField;
     private TextField initialYearField;
@@ -47,7 +51,7 @@ public class Main extends Application{
     @Override
     public void start(Stage stage) throws Exception {
         stage.setTitle("Table inside JavaFx");
-        //TABELA
+        //TABELA ->
         TableColumn<Show, Integer> showIdColumn = new TableColumn<>("Show ID");
         showIdColumn.setCellValueFactory(new PropertyValueFactory<>("showId"));
 
@@ -61,7 +65,10 @@ public class Main extends Application{
         initialYearColumn.setCellValueFactory(new PropertyValueFactory<>("initialYear"));
 
         showTableView = new TableView<>();
-        showTableView.getItems().addAll(new ShowController().loadShows());
+        //veza između TableView<Show> i ObservableList<Show> unutar koje se nalaze podaci
+        ObservableList<Show> dataList = new ShowController().loadShows();
+        showTableView.getItems().addAll(dataList);
+        //veza između TableView<Show> i prisutnih kolona TableColumn<Show, X>
         showTableView.getColumns().addAll(showIdColumn, showTitleColumn, numberOfSeasonsColumn, initialYearColumn);
 
         //FORMA
@@ -69,12 +76,24 @@ public class Main extends Application{
         showTitleTextField.setPromptText("Enter show title...");
         numberOfSeasonField = new TextField();
         numberOfSeasonField.setPromptText("Enter num of seasons...");
+        numberOfSeasonField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue!=null && !newValue.matches("\\d*")){
+                numberOfSeasonField.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
         initialYearField = new TextField();
         initialYearField.setPromptText("Enter initial year...");
+        initialYearField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue!=null && !newValue.matches("\\d*")){
+                numberOfSeasonField.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
         Button addShowButton = new Button("Add");
         addShowButton.setOnAction(this::onAddShowButtonClick);
+        Button deleteShowButton = new Button("Delete");
+        deleteShowButton.setOnAction(this::onDeleteShowButtonClick);
         HBox forma = new HBox(10);
-        forma.getChildren().addAll(showTitleTextField, numberOfSeasonField, initialYearField, addShowButton);
+        forma.getChildren().addAll(showTitleTextField, numberOfSeasonField, initialYearField, addShowButton, deleteShowButton);
         forma.setPadding(new Insets(12, 12, 12, 12));
 
 
@@ -86,16 +105,36 @@ public class Main extends Application{
         stage.show();
     }
 
-    private void onAddShowButtonClick(Event event){
-        //INSERT U TABELU U BAZI
-        try {
+    private void onDeleteShowButtonClick(ActionEvent event) {
+        ObservableList<Show> selectedShows = showTableView.getSelectionModel().getSelectedItems();
+        ObservableList<Show> allShows= showTableView.getItems();
+        try{
             ConnectionPool connectionPool = new ConnectionPool();
             ShowDao showDao = new ShowDao(connectionPool);
-            Show show = new Show();
+            for(Show show : selectedShows){
+                showDao.delete(show);
+            }
+        }catch (SQLException exception){
+            System.err.println(exception.getMessage());
+        }
+        selectedShows.forEach(allShows::remove);
+    }
+
+    private void onAddShowButtonClick(Event event){
+        try {
+            ConnectionPool connectionPool = new ConnectionPool();
+            ShowDao showDao = new ShowDao(connectionPool);//CRUD
+            Show show = new Show();//showId ne
+            //showTitle, numOfSeasons, initalYear
             show.setShowTitle(showTitleTextField.getText());
             show.setNumOfSeasons(Integer.parseInt(numberOfSeasonField.getText()));
             show.setInitialYear(Integer.parseInt(initialYearField.getText()));
-            showDao.create(show);
+            //INSERTUJE podatke iz show objekta u tabelu shows u bazi movies
+            show = showDao.create(show);//sva osim showId
+            showTableView.getItems().add(show);
+            showTitleTextField.clear();
+            numberOfSeasonField.clear();
+            initialYearField.clear();
         }catch (SQLException e){
             System.err.println(e.getMessage());
         }

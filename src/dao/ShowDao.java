@@ -17,7 +17,22 @@ public class ShowDao implements Dao<Show>{
 
     @Override
     public Show create(Show show) throws SQLException {
-        throw new UnsupportedOperationException("Nije podržana operacija");
+        String sqlInsert = "INSERT INTO shows (show_title, num_seasons,initial_year) VALUES(?,?,?)";
+        Connection connection = connectionPool.getConnection();
+        try(PreparedStatement ps = connection.prepareStatement(sqlInsert,Statement.RETURN_GENERATED_KEYS);){
+            ps.setString(1,show.getShowTitle());
+            ps.setInt(2, show.getNumOfSeasons());
+            ps.setInt(3, show.getInitialYear());
+            int affected = ps.executeUpdate();
+            ResultSet resultSet = ps.getGeneratedKeys();
+            while(resultSet.next()){
+                int lastGeneratedKey = resultSet.getInt(1);
+                show.setShowId(lastGeneratedKey);
+            }
+        }catch (SQLException exception){
+            System.err.println(exception.getMessage());
+        }
+        return show;
     }
 
     @Override
@@ -82,7 +97,15 @@ public class ShowDao implements Dao<Show>{
 
     @Override
     public void delete(Show show) throws SQLException {
-        throw  new UnsupportedOperationException("Delete nije podržan");
+        String sqlDelete = "DELETE FROM shows WHERE show_id=?";
+        Connection connection = connectionPool.getConnection();
+        try(PreparedStatement ps = connection.prepareStatement(sqlDelete)){
+            ps.setInt(1, show.getShowId());
+            int affectedRows =  ps.executeUpdate();
+            System.out.println("Ukupno izbrisanih: " + affectedRows);
+        }catch (SQLException sqlException){
+            System.err.println(sqlException.getMessage());
+        }
     }
 
 

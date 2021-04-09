@@ -4,7 +4,7 @@ public enum ConnectionEnum {
 
     URL("jdbc:mysql://localhost:3306/movies?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false"),
     USERNAME("root"),
-    PASSWORD("Admin2021!");
+    PASSWORD("Admin123!");
 
     private String value;
 
