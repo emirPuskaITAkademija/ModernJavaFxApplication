@@ -9,13 +9,12 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import model.Show;
 
@@ -30,11 +29,147 @@ import java.sql.SQLException;
  * <li>ListView</li>
  * <li>TreeView</li>
  * <li>TableView</li>
+ * <li>Making Menus</li>
  * root
  *   branch
  *   leaf
  *
  */
+
+public class Main extends Application{
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage stage) throws Exception {
+
+    }
+}
+/*
+public class Main extends Application{
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        stage.setTitle("JavaFx");
+        GridPane gridPane = new GridPane();
+        gridPane.setVgap(10);
+        gridPane.setHgap(10);
+        gridPane.setPadding(new Insets(20, 20, 20, 20));
+        gridPane.setAlignment(Pos.CENTER);
+        //Username
+        Label usernameLabel = new Label("Username");
+        usernameLabel.setStyle("-fx-text-fill:white;");
+        //0 kolona 0 red
+        GridPane.setConstraints(usernameLabel, 0, 0);
+        //1 kolona 0 red
+        TextField usernameField = new TextField();
+
+        usernameField.setPromptText("Unesi username....");
+        GridPane.setConstraints(usernameField, 1, 0);
+        //Password
+        Label passwordLabel = new Label("Password");
+        passwordLabel.setId("bold-label");
+        GridPane.setConstraints(passwordLabel, 0, 1);
+        PasswordField passwordField = new PasswordField();
+        passwordField.setPromptText("Unesi lozinku..");
+        GridPane.setConstraints(passwordField, 1, 1);
+
+        //Login
+        Button loginButton = new Button("Login");
+        loginButton.setOnAction(event -> setUserAgentStylesheet(STYLESHEET_CASPIAN));
+        Button registerButton = new Button("Register");
+        registerButton.getStyleClass().add("button-blue");
+        FlowPane flowPane = new FlowPane();
+        flowPane.setAlignment(Pos.CENTER_RIGHT);
+        flowPane.setHgap(20);
+        flowPane.getChildren().addAll(loginButton, registerButton);
+        GridPane.setConstraints(flowPane, 1, 2);
+        gridPane.getChildren().addAll(usernameField, usernameLabel, passwordField, passwordLabel, flowPane);
+
+        Scene scene = new Scene(gridPane, 600, 300);
+        scene.getStylesheets().add("Dark.css");
+        stage.setScene(scene);
+        stage.show();
+
+
+
+    }
+}
+/*
+public class Main extends Application{
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    private BorderPane borderPane;
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        stage.setTitle("JavFx MenuBar");
+        borderPane = new BorderPane();
+        //Menu: File
+        Menu fileMenu = new Menu("_File");
+        ObservableList<MenuItem> menuItemObservableList =fileMenu.getItems();
+        MenuItem newProjectMenuItem = new MenuItem("New Project..");
+        newProjectMenuItem.setOnAction(event -> {
+            System.out.println("New project has just been created....");
+        });
+        menuItemObservableList.add(newProjectMenuItem);
+        menuItemObservableList.add(new MenuItem("Open Project..."));
+        menuItemObservableList.add(new MenuItem("Close Project"));
+        menuItemObservableList.add(new SeparatorMenuItem());
+        menuItemObservableList.add(new MenuItem("Settings"));
+        menuItemObservableList.add(new MenuItem("Project structure"));
+        menuItemObservableList.add(new SeparatorMenuItem());
+        menuItemObservableList.add(new MenuItem("Exit"));
+        //EDIT menu
+        Menu editMenu = new Menu("_Edit");
+        editMenu.getItems().add(new MenuItem("Cut"));
+        editMenu.getItems().add(new MenuItem("Copy"));
+        MenuItem pasteMenuItem = new MenuItem("Paste");
+        pasteMenuItem.setDisable(true);
+        editMenu.getItems().add(pasteMenuItem);
+        //Help menu
+        Menu helpMenu = new Menu("_Help");
+        CheckMenuItem showLineNumbers = new CheckMenuItem("Show line numbers");
+        showLineNumbers.setOnAction(event -> {
+            if(showLineNumbers.isSelected()){
+                System.out.println("Program će prikazati brojeve linija..");
+            }else{
+                System.out.println("Program će sakriti brojeve linija...");
+            }
+        });
+        helpMenu.getItems().add(showLineNumbers);
+
+        //Level menu
+        Menu levelMenu = new Menu("_Level");
+        RadioMenuItem easyRadioMenuItem = new RadioMenuItem("Easy");
+        RadioMenuItem mediumRadioMenuItem = new RadioMenuItem("Medium");
+        RadioMenuItem hardRadioMenuItem = new RadioMenuItem("Hard");
+        ToggleGroup toggleGroup = new ToggleGroup();
+        easyRadioMenuItem.setToggleGroup(toggleGroup);
+        mediumRadioMenuItem.setToggleGroup(toggleGroup);
+        hardRadioMenuItem.setToggleGroup(toggleGroup);
+        levelMenu.getItems().addAll(easyRadioMenuItem, mediumRadioMenuItem, hardRadioMenuItem);
+        //MENU BAR
+        MenuBar menuBar = new MenuBar();
+        ObservableList<Menu> menuObservableList = menuBar.getMenus();
+        menuObservableList.addAll(fileMenu, editMenu, levelMenu, helpMenu);
+        borderPane.setTop(menuBar);
+
+        Scene scene = new Scene(borderPane, 300, 300);
+        stage.setScene(scene);
+        stage.show();
+    }
+}
+/*
 public class Main extends Application{
 
 

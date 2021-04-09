@@ -1,0 +1,32 @@
+.root{
+    -fx-background-color:#383838;
+    -fx-font-size:11pt;
+}
+
+.label{
+    -fx-text-fill:white;
+}
+
+.button{
+    -fx-background-color:#ab4642;
+    -fx-text-fill:#FFFFFF;
+    -fx-background-radius: 12;
+}
+
+.button-blue{
+    -fx-background-color:#7CAFC2;
+    -fx-text-fill:white;
+    -fx-background-radius: 12;
+}
+
+#bold-label{
+    -fx-font-weight:bold;
+}
+
+.button:hover{
+    -fx-background-color: green;
+}
+
+.button:pressed{
+    -fx-background-color:yellow;
+}
