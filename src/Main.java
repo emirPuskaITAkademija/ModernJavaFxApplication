@@ -4,7 +4,10 @@ import dao.ShowDao;
 import dao.connection.ConnectionPool;
 import javafx.application.Application;
 import javafx.beans.Observable;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -33,9 +36,20 @@ import java.sql.SQLException;
  * root
  *   branch
  *   leaf
+ *  <li>Observer...ObservableProperties</li>
+ *  <li>Binding</li>
+ *  UI -> CILJ: TextField..Label
  *
  */
+public class Main extends  Application{
 
+    @Override
+    public void start(Stage stage) throws Exception {
+
+    }
+}
+
+/*
 public class Main extends Application{
 
     public static void main(String[] args) {
@@ -44,7 +58,28 @@ public class Main extends Application{
 
     @Override
     public void start(Stage stage) throws Exception {
+        stage.setTitle("JavaFx");
+        TextField userInputTextField = new TextField();
+        userInputTextField.setMaxWidth(200);
+        userInputTextField.setPromptText("Unesi svoje ime...");
+        Label welcomeLabel = new Label("Welcome: ");
+        //Labelu ispod ćemo vezati za userInputTextField
+        Label bindedLabel = new Label();
+        HBox bottomeTextBox = new HBox();
+        bottomeTextBox.getChildren().addAll(welcomeLabel, bindedLabel);
+        bottomeTextBox.setAlignment(Pos.CENTER);
 
+        VBox vBox = new VBox(10);
+        vBox.getChildren().addAll( userInputTextField, bottomeTextBox);
+        vBox.setAlignment(Pos.CENTER);
+
+        StringProperty bindedLabelProperty = bindedLabel.textProperty();
+        StringProperty userInputTextFieldProperty = userInputTextField.textProperty();
+        bindedLabelProperty.bind(userInputTextFieldProperty);
+
+        Scene scene = new Scene(vBox, 300, 300);
+        stage.setScene(scene);
+        stage.show();
     }
 }
 /*
